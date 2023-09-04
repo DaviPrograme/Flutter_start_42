@@ -23,7 +23,7 @@ class StateDisplayCalculator extends State<DisplayCalculator>{
 
  @override
   Widget build(BuildContext context) {
-   return Expanded(
+    return Expanded(
       flex: 1,
       child: Container(
         width: double.infinity,
