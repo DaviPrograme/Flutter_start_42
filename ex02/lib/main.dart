@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'display.dart';
 import 'keyboard.dart';
 
 void main() {
@@ -25,63 +25,5 @@ class Calculator extends StatelessWidget {
         ]),
      ),
     );
-  }
-}
-
-class StateDisplayCalculator extends State<DisplayCalculator>{
-  String expression = "1+2+3+4+5+6";
-  String result = "42424242";
-
-  void insertCharIntoExpr(String char){
-    setState(() {
-      expression = expression + char;
-    });
-  }
-
- String getResult()  {
-  return result;
- }
-
- void setResult (String newResult) {
-  setState(() {
-    result =  newResult;
-  });
- }
-
- @override
-  Widget build(BuildContext context) {
-   return Expanded(
-      flex: 1,
-      child: Container(
-        width: double.infinity,
-        alignment: Alignment.centerRight,
-        decoration: BoxDecoration(color: Color.fromARGB(255, 54, 54, 54)),
-          child: Column(children: [
-            AutoSizeText (
-              expression,
-              minFontSize: 20,
-              maxFontSize: 80,
-              maxLines: 1, 
-              textAlign: TextAlign.end,
-              style: TextStyle( fontWeight: FontWeight.w100, fontSize: 80, color: Colors.white)
-            ),
-             AutoSizeText (
-              result,
-              minFontSize: 20,
-              maxFontSize: 80,
-              maxLines: 1, 
-              textAlign: TextAlign.end,
-              style: TextStyle( fontWeight: FontWeight.w100, fontSize: 80, color: Colors.white)
-            ),
-          ]),
-      )
-    );
-  }
-}
-
-class DisplayCalculator extends StatefulWidget{
-  @override
-  State<DisplayCalculator> createState() {
-    return StateDisplayCalculator();
   }
 }
