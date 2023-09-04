@@ -14,7 +14,14 @@ class Button extends StatelessWidget{
       child: ElevatedButton(
         onPressed: () => print(text), 
         child: Text(text),
-        )
-      );
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0.0), // Altere o valor do raio conforme necessário.
+            ),
+          ),
+        ),
+      )
+    );
   }
 }
