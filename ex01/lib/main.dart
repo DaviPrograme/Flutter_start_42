@@ -25,11 +25,11 @@ class StateHello42 extends State<Hello42>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.blue,),
                 child: Text(
                   isInitial ? "42 São Paulo" : "Hello World!",
                   style: TextStyle(color: Colors.white, fontSize: 50),
                 ), 
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.blue,),
               ),
               ElevatedButton(onPressed: pressButton, child: Text("Press"))
             ]
