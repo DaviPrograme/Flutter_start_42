@@ -40,7 +40,6 @@ class Keyboard extends StatelessWidget{
               [
                 Button("0", true),
                 Button("."),
-                Button("GC"),
                 Button("="),
               ]
             ),

@@ -10,14 +10,14 @@ class Button extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: big ? 2 : 1,
+      flex: big ? 3 : 1,
       child: ElevatedButton(
         onPressed: () => print(text), 
         child: Text(text),
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0.0), // Altere o valor do raio conforme necessário.
+              borderRadius: BorderRadius.circular(0.0),
             ),
           ),
         ),
