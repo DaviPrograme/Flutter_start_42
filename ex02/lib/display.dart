@@ -28,7 +28,7 @@ class StateDisplayCalculator extends State<DisplayCalculator>{
       child: Container(
         width: double.infinity,
         alignment: Alignment.centerRight,
-        decoration: BoxDecoration(color: Color.fromARGB(255, 54, 54, 54)),
+        decoration: BoxDecoration(color: Color.fromARGB(255, 122, 121, 121)),
           child: Column(children: [
             AutoSizeText (
               expression,
