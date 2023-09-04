@@ -11,36 +11,36 @@ class Keyboard extends StatelessWidget{
           children: [
             ButtonRow(
               [
-                Button("7"),
-                Button("8"),
-                Button("9"),
-                Button("C"),
-                Button("AC"),
+                Button.number("7"),
+                Button.number("8"),
+                Button.number("9"),
+                Button.clear("C"),
+                Button.clear("AC"),
               ]
             ),
              ButtonRow(
               [
-                Button("4"),
-                Button("5"),
-                Button("6"),
-                Button("+"),
-                Button("-"),
+                Button.number("4"),
+                Button.number("5"),
+                Button.number("6"),
+                Button.arithmetic("+"),
+                Button.arithmetic("-"),
               ]
             ),
             ButtonRow(
               [
-                Button("1"),
-                Button("2"),
-                Button("3"),
-                Button("*"),
-                Button("/"),
+                Button.number("1"),
+                Button.number("2"),
+                Button.number("3"),
+                Button.arithmetic("*"),
+                Button.arithmetic("/"),
               ]
             ),
              ButtonRow(
               [
-                Button("0", true),
-                Button("."),
-                Button("="),
+                Button.number("0", true),
+                Button.point("."),
+                Button.arithmetic("=", true),
               ]
             ),
           ],

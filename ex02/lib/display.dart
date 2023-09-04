@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 class StateDisplayCalculator extends State<DisplayCalculator>{
-  String expression = "1+2+3+4+5+6";
-  String result = "42424242";
+  String expression = "0";
+  String result = "0";
 
   void insertCharIntoExpr(String char){
     setState(() {

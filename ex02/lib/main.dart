@@ -12,6 +12,7 @@ class Calculator extends StatelessWidget {
     return MaterialApp(
      home: Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 41, 41, 41),
         title: Container(
           width: double.infinity,
           child: Center(
