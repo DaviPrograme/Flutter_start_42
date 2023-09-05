@@ -13,9 +13,10 @@ class DisplayCalculator extends StatelessWidget{
       flex: 1,
       child: Container(
         width: double.infinity,
-        alignment: Alignment.centerRight,
         decoration: BoxDecoration(color: Color.fromARGB(255, 122, 121, 121)),
-          child: Column(children: [
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
             AutoSizeText (
               expression,
               minFontSize: 20,
