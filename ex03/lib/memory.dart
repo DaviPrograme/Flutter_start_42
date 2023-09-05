@@ -44,7 +44,7 @@ class Memory {
     int index = expr.length - 1;
 
     while(true){
-      if(index == 0){
+      if(index == 0 && double.tryParse(expr[0]) != null){
         return true;
       } else if (expr[index] == ".") {
         return false;
@@ -61,10 +61,14 @@ class Memory {
 
   void buttonPressedAction(String btnText){
     if(double.tryParse(btnText) != null){
-      _expression = expression + btnText;
+      if(_expression == "0" || _expression == "*" || _expression == "/"){
+        _expression = btnText;
+      }else{
+        _expression = expression + btnText;
+      }
     }
     else if(_isArithmeticOperation(btnText)){
-      if(double.tryParse(_expression[_expression.length - 1]) != null){
+      if(double.tryParse(_expression[_expression.length - 1]) != null && _expression != "0"){
         _expression = _expression + btnText;
       } else {
         _expression = _expression.substring(0, _expression.length - 1) + btnText;
