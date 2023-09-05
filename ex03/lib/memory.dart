@@ -1,3 +1,4 @@
+import 'package:math_expressions/math_expressions.dart';
 
 class Memory {
   String _expression = "0";
@@ -27,9 +28,17 @@ class Memory {
     }
   }
 
+  void _clearExpression(){
+     _expression = "0";
+  }
+
+   void _clearResult(){
+     _result = "0";
+  }
+
   void _clearResultAndExpression(){
-    _expression = "0";
-    _result = "0";
+    _clearExpression();
+    _clearResult();
   }
 
   void _deleteLastCharExpression(){
@@ -68,7 +77,8 @@ class Memory {
       }
     }
     else if(_isArithmeticOperation(btnText)){
-      if(double.tryParse(_expression[_expression.length - 1]) != null && _expression != "0"){
+      if((double.tryParse(_expression[_expression.length - 1]) != null && _expression != "0") ||
+        (_expression == "0" && (btnText == "*" || btnText == "/"))){
         _expression = _expression + btnText;
       } else {
         _expression = _expression.substring(0, _expression.length - 1) + btnText;
@@ -84,8 +94,19 @@ class Memory {
       _expression = _expression + btnText;
     }
     else if(btnText == "="){
-      print("falta a função de =");
+      _calculateExpression(_expression);
+      _clearExpression();
     }
   }
 
+  void _calculateExpression(String expr){
+    Parser parser = Parser();
+    Expression expressao = parser.parse(expr);
+
+    // Avaliar a expressão
+    _result = expressao.evaluate(EvaluationType.REAL, ContextModel()).toString() ;
+    if(_result.length > 2 && _result[_result.length - 1] == "0" && _result[_result.length - 2] == "."){
+      _result = _result.substring(0, _result.length - 2);
+    }
+  }
 }
