@@ -45,7 +45,7 @@ class Memory {
     if(_expression.length > 1){
       _expression = _expression.substring(0, _expression.length - 1);
     } else {
-      _expression = "0";
+      _clearExpression();
     }
   }
 
