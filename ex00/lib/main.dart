@@ -15,19 +15,24 @@ class SinglePage extends StatelessWidget {
 
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: Text("Single Page 42"),
-        ),
+         appBar: AppBar( title: Text("ex00", style: TextStyle(fontSize: sizeFont))),
         body: Center(
-          child: ElevatedButton(
-            child: Text(
-              "Pressione",
-              style: TextStyle(fontSize: sizeFont),
-            ),
-            onPressed: () => print("Button pressed"),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(margin: EdgeInsets.all(20),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),),
+                child: Text(
+                  "42 São Paulo",
+                  style: TextStyle(color: Colors.black, fontSize: sizeFont),
+                ),
+              ),
+              ElevatedButton(onPressed: () => print("Button pressed"), child: Text("Press", style: TextStyle(fontSize: sizeFont, ),))
+            ]
           )
-        ),
-      ),
+        )
+      )
     );
   }
 }
