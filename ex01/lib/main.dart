@@ -16,6 +16,11 @@ class StateHello42 extends State<Hello42>{
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    double fator = 0.05;
+    double sizeFont = height < width ? height * fator : width * fator;
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar( title: Text("ex01", style: TextStyle(fontSize: 42))),
@@ -24,14 +29,14 @@ class StateHello42 extends State<Hello42>{
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.blue,),
+              Container(margin: EdgeInsets.all(20),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),),
                 child: Text(
                   isInitial ? "42 São Paulo" : "Hello World!",
-                  style: TextStyle(color: Colors.white, fontSize: 50),
+                  style: TextStyle(color: Colors.black, fontSize: sizeFont),
                 ), 
               ),
-              ElevatedButton(onPressed: pressButton, child: Text("Press"))
+              ElevatedButton(onPressed: pressButton, child: Text("Press", style: TextStyle(fontSize: sizeFont, ),))
             ]
           )
         ) 
