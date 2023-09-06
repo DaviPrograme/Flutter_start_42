@@ -23,7 +23,7 @@ class StateHello42 extends State<Hello42>{
 
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar( title: Text("ex01", style: TextStyle(fontSize: 42))),
+        appBar: AppBar( title: Text("ex01", style: TextStyle(fontSize: sizeFont))),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.max,
