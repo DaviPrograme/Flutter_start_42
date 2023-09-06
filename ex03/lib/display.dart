@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -9,6 +11,8 @@ class DisplayCalculator extends StatelessWidget{
 
  @override
   Widget build(BuildContext context) {
+    double defineMaxFontSize = 80;
+    double defineMinFontSize = 10;
     return Expanded(
       flex: 1,
       child: Container(
@@ -19,19 +23,19 @@ class DisplayCalculator extends StatelessWidget{
             children: [
             AutoSizeText (
               expression,
-              minFontSize: 20,
-              maxFontSize: 80,
+              minFontSize: defineMinFontSize,
+              maxFontSize: defineMaxFontSize,
               maxLines: 1, 
               textAlign: TextAlign.end,
-              style: TextStyle( fontWeight: FontWeight.w100, fontSize: 80, color: Colors.white)
+              style: TextStyle( fontWeight: FontWeight.w100, fontSize: defineMaxFontSize, color: Colors.white)
             ),
              AutoSizeText (
               result,
-              minFontSize: 20,
-              maxFontSize: 80,
+              minFontSize: defineMinFontSize,
+              maxFontSize: defineMaxFontSize,
               maxLines: 1, 
               textAlign: TextAlign.end,
-              style: TextStyle( fontWeight: FontWeight.w100, fontSize: 80, color: Colors.white)
+              style: TextStyle( fontWeight: FontWeight.w100, fontSize: defineMaxFontSize, color: Colors.white)
             ),
           ]),
       )
