@@ -100,13 +100,17 @@ class Memory {
   }
 
   void _calculateExpression(String expr){
-    Parser parser = Parser();
-    Expression expressao = parser.parse(expr);
+    if(_isArithmeticOperation(expr[expr.length - 1]) == false){
+        Parser parser = Parser();
+        Expression expressao = parser.parse(expr);
 
-    // Avaliar a expressão
-    _result = expressao.evaluate(EvaluationType.REAL, ContextModel()).toString() ;
-    if(_result.length > 2 && _result[_result.length - 1] == "0" && _result[_result.length - 2] == "."){
-      _result = _result.substring(0, _result.length - 2);
+        // Avaliar a expressão
+        _result = expressao.evaluate(EvaluationType.REAL, ContextModel()).toString() ;
+        if(_result.length > 2 && _result[_result.length - 1] == "0" && _result[_result.length - 2] == "."){
+          _result = _result.substring(0, _result.length - 2);
+        }
+    }else{
+      _result = "Invalid";
     }
   }
 }
