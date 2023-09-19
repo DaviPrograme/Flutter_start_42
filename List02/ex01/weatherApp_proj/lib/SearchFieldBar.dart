@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
+import './data/repositories/regionRepository.dart';
+import './data/http/http_client.dart';
 
 class StateSearchFieldBar extends State<SearchFieldBar>{
   final void Function(Widget) updateWidgetBody;
@@ -42,16 +43,6 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
     }
 
     return await Geolocator.getCurrentPosition();
-  }
-
-  Future<List> getRegionNameWithSearchText(String searchText) async {
-    var url = Uri.parse('https://geocoding-api.open-meteo.com/v1/search').replace(queryParameters: {'name': searchText, 'format': 'json'});
-    var response = await http.get(url);
-    if(response.statusCode == 200){
-      return jsonDecode(utf8.decode(response.bodyBytes));
-    } else {
-      throw Exception("erros ao carregar dados do servidor");
-    }
   }
 
  
@@ -105,7 +96,16 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
               color: Colors.blue, 
               child: TextField(
                 onSubmitted: updateWidgetWithTextField,
-                onChanged: (value){print(value);},
+                onChanged: (value) async {
+                  try{
+                    final http = HttpRepository();
+                    final repository = RegionRepository(client: http);
+                    final teste = await repository.getRegion();
+                    print("DEVOLVEU ESTE VALOR: ${teste.first.name}");
+                  }catch(e){
+                    print("ERROR: $e");
+                  }
+                },
                 decoration:  InputDecoration(
                   hintText: "  please, write here...",
                   hintStyle: TextStyle(fontSize: fontTextFieldSize, fontStyle: FontStyle.italic) ,
