@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import './data/repositories/regionRepository.dart';
 import './data/http/http_client.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class StateSearchFieldBar extends State<SearchFieldBar>{
   final void Function(Widget) updateWidgetBody;
@@ -92,35 +92,42 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
       _searchFieldController.clear();
     }
 
+
     return  Container(
-              color: Colors.blue, 
-              child: TextField(
-                onSubmitted: updateWidgetWithTextField,
-                onChanged: (value) async {
-                  try{
-                    final http = HttpRepository();
-                    final repository = RegionRepository(client: http);
-                    final teste = await repository.getRegion();
-                    print("DEVOLVEU ESTE VALOR: ${teste.first.name}");
-                  }catch(e){
-                    print("ERROR: $e");
-                  }
-                },
-                decoration:  InputDecoration(
-                  hintText: "  please, write here...",
-                  hintStyle: TextStyle(fontSize: fontTextFieldSize, fontStyle: FontStyle.italic) ,
-                  prefixIcon: Icon(Icons.search, color: Colors.orange, size: iconSize),
-                  suffixIcon: IconButton(onPressed: onPressedGeolocation, 
-                    icon: Icon(Icons.location_on, color: Colors.orange, size: iconSize),
-                  ) 
-                ) ,
-                controller: _searchFieldController,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: fontTextFieldSize,
-                ),
-              ),
-            );
+      color: Colors.blue,
+      child: TypeAheadField(
+        textFieldConfiguration: TextFieldConfiguration(
+          controller: _searchFieldController,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: fontTextFieldSize,
+          ),
+          decoration:  InputDecoration(
+            hintText: "  please, write here...",
+            hintStyle: TextStyle(fontSize: fontTextFieldSize, fontStyle: FontStyle.italic) ,
+            prefixIcon: Icon(Icons.search, color: Colors.orange, size: iconSize),
+            suffixIcon: IconButton(
+              onPressed: onPressedGeolocation,
+              icon: Icon(Icons.location_on, color: Colors.orange, size: iconSize),
+            )
+          ),
+        ),
+        suggestionsCallback: (pattern) async {
+          return await RegionRepository(client: HttpRepository()).getRegion(pattern);
+        },
+        itemBuilder: (context, suggestion) {
+          return ListTile(
+            leading: const Icon(Icons.location_city),
+            title: Text(suggestion),
+          );
+        },
+        onSuggestionSelected: (suggestion) {
+          setState(() {
+            _searchFieldController.text = suggestion;
+          });
+        }
+      )
+    );
   }
 
 }

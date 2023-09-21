@@ -5,7 +5,7 @@ import 'package:weather/data/models/regionModel.dart';
 import '../http/http_client.dart';
 
 abstract class IRegionRepository {
-  Future<List<RegionModel>> getRegion();
+  Future<List<String>> getRegion(String searchText);
 }
 
 class RegionRepository implements IRegionRepository{
@@ -14,9 +14,19 @@ class RegionRepository implements IRegionRepository{
   RegionRepository({required this.client});
 
   @override
-  Future<List<RegionModel>> getRegion() async {
+  Future<List<String>> getRegion(String searchText) async {
+     if (searchText.isEmpty || searchText.length < 3 || searchText.length > 12) {
+      return [];
+    }
+    const String domain = "https://geocoding-api.open-meteo.com/v1/search?";
+    const String nameParam = "name=";
+    const String countParam = "count=5";
+    const String languageParam = "language=pt";
+    const String formatParam = "format=json";
+
+
     final response = await client.get(
-      url: "https://geocoding-api.open-meteo.com/v1/search?name=Paris&count=10&language=en&format=json"
+      url: "$domain$nameParam$searchText&$countParam&$languageParam&$formatParam"
     );
 
     if(response.statusCode == 200){
@@ -26,7 +36,11 @@ class RegionRepository implements IRegionRepository{
         final regionModel = RegionModel.fromMap(item);
         regions.add(regionModel);
       }).toList();
-      return regions;
+
+      List<String> cities = regions.map((result) {
+        return '${result.name} - ${result.region} - ${result.country}';
+      }).toList();
+      return cities;
     } else if(response.statusCode == 404){
       throw NotFoundException("A url informada não é valida");
     } else {
