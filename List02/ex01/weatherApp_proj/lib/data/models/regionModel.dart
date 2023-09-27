@@ -2,19 +2,27 @@ class RegionModel {
   final String name;
   final String region;
   final String country;
-  final String countryCode;
+  final double latitude;
+  final double longitude;
 
   RegionModel({
     required this.name,
     required this.region,
     required this.country,
-    required this.countryCode,
+    required this.latitude,
+    required this.longitude
   });
 
   factory RegionModel.fromMap(Map<String, dynamic> map){
     final dynamic nameSelected = map['name'] ?? "unknow";
-    final dynamic regionSelected = map['admin2'] ?? "unknow";
+    final dynamic regionSelected = map['admin1'] ?? "unknow";
     final dynamic countrySelected = map['country'] ?? "unknow";
-    return RegionModel(name: nameSelected, region: regionSelected, country: countrySelected, countryCode: map['country_code']);
+    return RegionModel(
+      name: nameSelected, 
+      region: regionSelected, 
+      country: countrySelected,
+      latitude: map['latitude'],
+      longitude: map['longitude'],
+    );
   }
 }

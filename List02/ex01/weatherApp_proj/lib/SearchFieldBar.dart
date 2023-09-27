@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import './data/repositories/regionRepository.dart';
 import './data/http/http_client.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'dart:convert';
 
 class StateSearchFieldBar extends State<SearchFieldBar>{
   final void Function(Widget) updateWidgetBody;
@@ -57,15 +58,6 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
     double maxFont = 100;
     double minFont = 10;
 
-    void updateWidgetWithTextField(String newText){
-       updateWidgetBody( AutoSizeText(newText,
-          maxFontSize: maxFont,
-          minFontSize: minFont,
-          maxLines: 1,
-          style: TextStyle(fontSize: size * 0.1),
-        ));
-    }
-
     void onPressedGeolocation() async {
       Position? teste;
       try{
@@ -92,6 +84,48 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
       _searchFieldController.clear();
     }
 
+    void getCurrentWeatherRegion(String searchText) async {
+      try{
+        RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
+        final region = await regionRepository.getRegionFocus(searchText);
+        final response = await regionRepository.callAPICurrentWeather(region);
+        final body = jsonDecode(response.body);
+        if(response.statusCode == 200){
+          updateWidgetBody(
+            Column(
+              children: [
+                AutoSizeText(region.name,
+                  maxFontSize: maxFont,
+                  minFontSize: minFont,
+                  maxLines: 1,
+                  style: TextStyle(fontSize: size * 0.04),
+                ),
+                AutoSizeText('Latitude: ${region.latitude} Longitude: ${region.longitude}',
+                  maxFontSize: maxFont,
+                  minFontSize: minFont,
+                  maxLines: 1,
+                  style: TextStyle(fontSize: size * 0.04),
+                ),
+                AutoSizeText("${body["current_weather"]["temperature"].toString()}ºC",
+                  maxFontSize: maxFont,
+                  minFontSize: minFont,
+                  maxLines: 1,
+                  style: TextStyle(fontSize: size * 0.04),
+                ),
+              ],
+            )
+          );
+        } else if(response.statusCode == 404){
+          throw Exception("[CurrentWeather] URL not found.");
+        } else {
+          throw Exception("[CurrentWeather] Unable to load region information.");
+        }
+        }catch(e){
+          updateWidgetBody(
+            Text(e.toString(), style: TextStyle(fontSize: size * 0.04, color: Colors.red),),
+          );
+      }
+  }
 
     return  Container(
       color: Colors.blue,
@@ -102,8 +136,9 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
             color: Colors.black,
             fontSize: fontTextFieldSize,
           ),
+          onSubmitted: getCurrentWeatherRegion,
           decoration:  InputDecoration(
-            hintText: "  please, write here...",
+            hintText: "  example: name, region, country",
             hintStyle: TextStyle(fontSize: fontTextFieldSize, fontStyle: FontStyle.italic) ,
             prefixIcon: Icon(Icons.search, color: Colors.orange, size: iconSize),
             suffixIcon: IconButton(
@@ -113,7 +148,12 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
           ),
         ),
         suggestionsCallback: (pattern) async {
-          return await RegionRepository(client: HttpRepository()).getRegion(pattern);
+          try{
+            return await RegionRepository(client: HttpRepository()).getRegionsSuggestion(pattern);
+          } catch(e){
+            print(e);
+            return [];
+          }
         },
         itemBuilder: (context, suggestion) {
           return ListTile(
@@ -124,8 +164,9 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
         onSuggestionSelected: (suggestion) {
           setState(() {
             _searchFieldController.text = suggestion;
+            getCurrentWeatherRegion(suggestion.toString());
           });
-        }
+        },
       )
     );
   }
