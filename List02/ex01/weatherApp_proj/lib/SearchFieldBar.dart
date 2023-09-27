@@ -85,6 +85,9 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
     }
 
     void getCurrentWeatherRegion(String searchText) async {
+      if(searchText.isEmpty){
+        return;
+      }
       try{
         RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
         final region = await regionRepository.getRegionFocus(searchText);
