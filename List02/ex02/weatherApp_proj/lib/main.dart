@@ -13,29 +13,31 @@ void main() {
 class StateWeatherApp extends State<WeatherApp>{
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
-  Widget? contentPage;
   RegionModel? region;
 
+  void searchRegion(String searchText) async {
+    if(searchText.isEmpty){
+      return;
+    }
+    try{
+      RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
+      RegionModel regionTemp = await regionRepository.getRegionFocus(searchText);
+      setState(() {
+        region = regionTemp;
+      });
+    } catch (e){
+      setState(() {
+        region = null;
+      });
+      print(e);
+    }
+  }
 
-      void searchRegion(String searchText) async {
-        if(searchText.isEmpty){
-          return;
-        }
-        try{
-          RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
-          RegionModel regionTemp = await regionRepository.getRegionFocus(searchText);
-          setState(() {
-            region = regionTemp;
-          });
-        } catch (e){
-          setState(() {
-            region = null;
-          });
-          print(e);
-        }
-      }
-   
-
+  void setRegion(RegionModel newRegion){
+    setState(() {
+      region = newRegion;
+    });
+  }
 
   void nextPageWeather(int index){
     setState(() {
@@ -49,12 +51,6 @@ class StateWeatherApp extends State<WeatherApp>{
     setState(() {
       _selectedIndex = index;
       _pageController.jumpToPage(index);
-    });
-  }
-
-  void updateContentPage(Widget newContent){
-    setState(() {
-      contentPage = newContent;
     });
   }
 
@@ -80,7 +76,7 @@ class StateWeatherApp extends State<WeatherApp>{
           ),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(size * 0.07),
-            child: SizedBox(width: widthSearchField, child: SearchFieldBar(updateContentPage, searchRegion),) ,
+            child: SizedBox(width: widthSearchField, child: SearchFieldBar(setRegion, searchRegion),) ,
           ),
         ),
         body: WeatherPages(nextPageWeather, _pageController, region),

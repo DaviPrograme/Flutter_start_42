@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:weather/data/models/regionModel.dart';
 import './data/repositories/regionRepository.dart';
 import './data/http/http_client.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'dart:convert';
 
 class StateSearchFieldBar extends State<SearchFieldBar>{
-  final void Function(Widget) updateWidgetBody;
+  final void Function(RegionModel) setRegion;
   final void Function(String) searchRegion;
   final TextEditingController _searchFieldController = TextEditingController();
   
 
-  StateSearchFieldBar(this.updateWidgetBody, this.searchRegion);
+  StateSearchFieldBar(this.setRegion, this.searchRegion);
 
   @override
   void dispose() {
@@ -60,76 +60,15 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
     double minFont = 10;
 
     void onPressedGeolocation() async {
-      Position? teste;
+      Position? region;
       try{
-        teste = await _determinePositionGPS();
-        updateWidgetBody( 
-          AutoSizeText('Latitude: ${teste.latitude.toString()} Longitude: ${teste.longitude.toString()}',
-            maxFontSize: maxFont,
-            minFontSize: minFont,
-            maxLines: 1,
-            style: TextStyle(fontSize: size * 0.1),
-          )
-        );
+        region = await _determinePositionGPS();
+        setRegion(RegionModel(name: "Here", region: "", country: "", latitude: region.latitude, longitude: region.longitude));
       } catch (e) {
-        print("Error: ${e.toString()}." );
-        updateWidgetBody(
-          AutoSizeText("Geolocation is not avaliable, please enable it in your App settings",
-            maxFontSize: maxFont,
-            minFontSize: minFont,
-            maxLines: 1,
-            style: TextStyle(fontSize: size * 0.1, color: Colors.red),
-          )
-        );
+        print("Error: ${e.toString()}.");
       }
       _searchFieldController.clear();
     }
-
-    void getCurrentWeatherRegion(String searchText) async {
-      if(searchText.isEmpty){
-        return;
-      }
-      try{
-        RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
-        final region = await regionRepository.getRegionFocus(searchText);
-        final response = await regionRepository.callAPICurrentWeather(region);
-        final body = jsonDecode(response.body);
-        if(response.statusCode == 200){
-          updateWidgetBody(
-            Column(
-              children: [
-                AutoSizeText(region.name,
-                  maxFontSize: maxFont,
-                  minFontSize: minFont,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: size * 0.04),
-                ),
-                AutoSizeText('Latitude: ${region.latitude} Longitude: ${region.longitude}',
-                  maxFontSize: maxFont,
-                  minFontSize: minFont,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: size * 0.04),
-                ),
-                AutoSizeText("${body["current_weather"]["temperature"].toString()}ºC",
-                  maxFontSize: maxFont,
-                  minFontSize: minFont,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: size * 0.04),
-                ),
-              ],
-            )
-          );
-        } else if(response.statusCode == 404){
-          throw Exception("[CurrentWeather] URL not found.");
-        } else {
-          throw Exception("[CurrentWeather] Unable to load region information.");
-        }
-        }catch(e){
-          updateWidgetBody(
-            Text(e.toString(), style: TextStyle(fontSize: size * 0.04, color: Colors.red),),
-          );
-      }
-  }
 
     return  Container(
       color: Colors.blue,
@@ -178,12 +117,12 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
 }
 
 class SearchFieldBar extends StatefulWidget{
-  final void Function(Widget) updateWidgetBody;
+  final void Function(RegionModel) setRegion;
   final void Function(String) searchRegion;
-  SearchFieldBar(this.updateWidgetBody, this.searchRegion);
+  SearchFieldBar(this.setRegion, this.searchRegion);
 
   @override
   State<SearchFieldBar> createState() {
-    return StateSearchFieldBar(updateWidgetBody, this.searchRegion);
+    return StateSearchFieldBar(setRegion, this.searchRegion);
   }
 }
