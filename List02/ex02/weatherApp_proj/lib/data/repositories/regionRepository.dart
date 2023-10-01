@@ -41,14 +41,13 @@ class RegionRepository implements IRegionRepository{
     return regions;
   }
 
-  Future<dynamic> callAPICurrentWeather(RegionModel region) {
+  Future<dynamic> callAPIWeather(RegionModel region, [String moreOptions = ""]) {
     const String domain = "https://api.open-meteo.com/v1/forecast?";
     const String latitudeQuery = "latitude=";
     const String longitudeQuery = "longitude=";
-    const String weatherQuery="current_weather=true";
 
     return client.get(
-      url: "$domain$latitudeQuery${region.latitude}&$longitudeQuery${region.longitude}&$weatherQuery"
+      url: "$domain$latitudeQuery${region.latitude}&$longitudeQuery${region.longitude}&${moreOptions.isNotEmpty ? moreOptions : ""}"
     );
   }
 
