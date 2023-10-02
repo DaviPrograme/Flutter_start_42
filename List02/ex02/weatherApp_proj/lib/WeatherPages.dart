@@ -223,6 +223,13 @@ class WeatherPages extends StatelessWidget{
         }
     }
 
+    Widget regionEmpty = AutoSizeText('Unable to capture region information',
+        maxFontSize: maxFont,
+        minFontSize: minFont,
+        maxLines: 1,
+        style: TextStyle(fontSize: size * 0.1, color: Colors.red),
+    );
+
     List<Widget> pages = [
       Center( child:
         Column(
@@ -230,7 +237,7 @@ class WeatherPages extends StatelessWidget{
           children: [
             Text("CURRENTLY", style: TextStyle(fontSize: fontTextSize)),
             (region == null ?
-              const Text("") :
+              regionEmpty :
               FutureBuilder<Widget>(
                 future: getCurrentWeatherRegion(region!),
                 builder: (context, snapshot) {
@@ -258,7 +265,7 @@ class WeatherPages extends StatelessWidget{
           children: [
             Text("TODAY", style: TextStyle(fontSize: fontTextSize)),
             (region == null ?
-              const Text("") :
+              regionEmpty :
                FutureBuilder<Widget>(
                 future: getTodayWeatherRegion(region!),
                 builder: (context, snapshot) {
@@ -287,7 +294,7 @@ class WeatherPages extends StatelessWidget{
             children: [
               Text("WEEKLY", style: TextStyle(fontSize: fontTextSize)),
               (region == null ?
-                const Text("") :
+                regionEmpty :
                 FutureBuilder<Widget>(
                   future: getWeeklyWeatherRegion(region!),
                   builder: (context, snapshot) {

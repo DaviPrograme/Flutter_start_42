@@ -5,6 +5,7 @@ import 'WeatherPages.dart';
 import './data/models/regionModel.dart';
 import './data/repositories/regionRepository.dart';
 import './data/http/http_client.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() {
   runApp(WeatherApp());
@@ -14,6 +15,50 @@ class StateWeatherApp extends State<WeatherApp>{
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
   RegionModel? region;
+
+  Future<void> _determinePositionInit() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    setState(() {
+      region = null;
+    });
+    return;
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      setState(() {
+        region = null;
+      });
+      return ;
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    setState(() {
+      setState(() {
+       region = null;
+      });
+    });
+    return ;
+  }
+
+  final teste = await Geolocator.getCurrentPosition();
+  setState(() {
+     region = RegionModel(name: "Here", region: "", country: "", latitude: teste.latitude, longitude: teste.longitude);
+  });
+}
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePositionInit();    
+  }
 
   void searchRegion(String searchText) async {
     if(searchText.isEmpty){

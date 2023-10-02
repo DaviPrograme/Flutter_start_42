@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'SearchFieldBar.dart';
 import 'WeatherNavBar.dart';
 import 'WeatherPages.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() {
   runApp(WeatherApp());
@@ -11,6 +12,48 @@ class StateWeatherApp extends State<WeatherApp>{
   int _selectedIndex = 0;
   String? searchText;
   final PageController _pageController = PageController();
+
+  Future<void> _determinePositionInit() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    setState(() {
+      searchText = 'Location services are disabled.';
+    });
+    return;
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      setState(() {
+        searchText = 'Location permissions are denied';
+      });
+      return ;
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    setState(() {
+      searchText = 'Location permissions are permanently denied, we cannot request permissions.';
+    });
+    return ;
+  }
+
+  final teste = await Geolocator.getCurrentPosition();
+  setState(() {
+    searchText = 'Latitude: ${teste.latitude.toString()} Longitude: ${teste.longitude.toString()}';
+  });
+}
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePositionInit();    
+  }
 
 
   void nextPageWeather(int index){
