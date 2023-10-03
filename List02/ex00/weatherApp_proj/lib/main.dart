@@ -20,7 +20,7 @@ class StateWeatherApp extends State<WeatherApp>{
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
     setState(() {
-      searchText = 'Location services are disabled.';
+      searchText = 'Location services disabled.';
     });
     return;
   }
@@ -30,7 +30,7 @@ class StateWeatherApp extends State<WeatherApp>{
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
       setState(() {
-        searchText = 'Location permissions are denied';
+        searchText = 'Location permissions have been denied';
       });
       return ;
     }
