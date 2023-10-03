@@ -105,10 +105,10 @@ class WeatherPages extends StatelessWidget{
         } else if(response.statusCode == 404){
           throw Exception("URL not found.");
         } else {
-          throw Exception("Unable to load region information.");
+          throw Exception("[${response.statusCode}] Unable to load region information.");
         }
         }catch(e){
-            return Text(e.toString(), style: TextStyle(fontSize: size * 0.04, color: Colors.red),);
+            return Text("$e", style: TextStyle(fontSize: size * 0.04, color: Colors.red),);
         }
     }
 
@@ -119,53 +119,54 @@ class WeatherPages extends StatelessWidget{
       try{
         RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
         final response = await regionRepository.callAPIWeather(region!, "hourly=temperature_2m,weathercode,windspeed_10m&timezone=GMT");
-        final body = jsonDecode(response.body);
-        List<String> time = List<String>.from(body['hourly']['time'].take(24));
-        List<double> temperature = List<double>.from(body['hourly']['temperature_2m'].take(24));
-        List<double> windspeed = List<double>.from(body['hourly']['windspeed_10m'].take(24));
-        List<int> weathercode = List<int>.from(body['hourly']['weathercode'].take(24));
-        List<DataColumn> columnList = const [
-          DataColumn(label: Text("time")),
-          DataColumn(label: Text("ºC")),
-          DataColumn(label: Text("wind")),
-          DataColumn(label: Text("weather")),
-        ];
-        List<DataRow> rowsList = [];
-
-        for(int index = 0; index < time.length; ++index){
-          rowsList.add(
-            DataRow(cells: [
-              DataCell(Text(time[index].split("T")[1])),
-              DataCell(Text(temperature[index].toString())),
-              DataCell(Text("${windspeed[index].toString()} km")),
-              DataCell(Text(translateSingleForecast(weathercode[index].toString()))),
-            ])
-          );
-        }
         if(response.statusCode == 200){
-            return Column(
-              children: [
-                AutoSizeText("${region.name}, ${region.region}, ${region.country}",
-                  maxFontSize: maxFont,
-                  minFontSize: minFont,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: size * 0.04),
-                ),
-                AutoSizeText('Latitude: ${region.latitude} Longitude: ${region.longitude}',
-                  maxFontSize: maxFont,
-                  minFontSize: minFont,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: size * 0.04),
-                ),
-                DataTable(
-                  columns: columnList,
-                  rows: rowsList)
-              ],
+          final body = jsonDecode(response.body);
+          List<String> time = List<String>.from(body['hourly']['time'].take(24));
+          List<double> temperature = List<double>.from(body['hourly']['temperature_2m'].take(24));
+          List<double> windspeed = List<double>.from(body['hourly']['windspeed_10m'].take(24));
+          List<int> weathercode = List<int>.from(body['hourly']['weathercode'].take(24));
+          List<DataColumn> columnList = const [
+            DataColumn(label: Text("time")),
+            DataColumn(label: Text("ºC")),
+            DataColumn(label: Text("wind")),
+            DataColumn(label: Text("weather")),
+          ];
+          List<DataRow> rowsList = [];
+
+          for(int index = 0; index < time.length; ++index){
+            rowsList.add(
+              DataRow(cells: [
+                DataCell(Text(time[index].split("T")[1])),
+                DataCell(Text(temperature[index].toString())),
+                DataCell(Text("${windspeed[index].toString()} km")),
+                DataCell(Text(translateSingleForecast(weathercode[index].toString()))),
+              ])
             );
+          }
+          return
+          Column(
+            children: [
+              AutoSizeText("${region.name}, ${region.region}, ${region.country}",
+                maxFontSize: maxFont,
+                minFontSize: minFont,
+                maxLines: 1,
+                style: TextStyle(fontSize: size * 0.04),
+              ),
+              AutoSizeText('Latitude: ${region.latitude} Longitude: ${region.longitude}',
+                maxFontSize: maxFont,
+                minFontSize: minFont,
+                maxLines: 1,
+                style: TextStyle(fontSize: size * 0.04),
+              ),
+              DataTable(
+                columns: columnList,
+                rows: rowsList)
+            ],
+          );
         } else if(response.statusCode == 404){
           throw Exception("URL not found.");
         } else {
-          throw Exception("Unable to load region information.");
+          throw Exception("[${response.statusCode}] Unable to load region information.");
         }
         }catch(e){
             return Text(e.toString(), style: TextStyle(fontSize: size * 0.04, color: Colors.red),);
@@ -180,60 +181,61 @@ class WeatherPages extends StatelessWidget{
       try{
         RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
         final response = await regionRepository.callAPIWeather(region!, "daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=GMT&current_weather=true");
-        final body = jsonDecode(response.body);
-        List<String> time = List<String>.from(body['daily']['time']);
-        List<double> max = List<double>.from(body['daily']['temperature_2m_max']);
-        List<double> min = List<double>.from(body['daily']['temperature_2m_min']);
-        List<int> weathercode = List<int>.from(body['daily']['weathercode']);
-        List<DataColumn> columnList = const [
-          DataColumn(label: Text("time")),
-          DataColumn(label: Text("min")),
-          DataColumn(label: Text("max")),
-          DataColumn(label: Text("weather")),
-        ];
-        List<DataRow> rowsList = [];
-
-        for(int index = 0; index < time.length; ++index){
-          rowsList.add(
-            DataRow(cells: [
-              DataCell(Text(time[index])),
-              DataCell(Text(min[index].toString())),
-              DataCell(Text(max[index].toString())),
-              DataCell(Text(translateSingleForecast(weathercode[index].toString()))),
-            ])
-          );
-        }
         if(response.statusCode == 200){
-            return Column(
-              children: [
-                AutoSizeText("${region.name}, ${region.region}, ${region.country}",
-                  maxFontSize: maxFont,
-                  minFontSize: minFont,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: size * 0.04),
-                ),
-                AutoSizeText('Latitude: ${region.latitude} Longitude: ${region.longitude}',
-                  maxFontSize: maxFont,
-                  minFontSize: minFont,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: size * 0.04),
-                ),
-                DataTable(
-                  columns: columnList,
-                  rows: rowsList)
-              ],
+          final body = jsonDecode(response.body);
+          List<String> time = List<String>.from(body['daily']['time']);
+          List<double> max = List<double>.from(body['daily']['temperature_2m_max']);
+          List<double> min = List<double>.from(body['daily']['temperature_2m_min']);
+          List<int> weathercode = List<int>.from(body['daily']['weathercode']);
+          List<DataColumn> columnList = const [
+            DataColumn(label: Text("time")),
+            DataColumn(label: Text("min")),
+            DataColumn(label: Text("max")),
+            DataColumn(label: Text("weather")),
+          ];
+          List<DataRow> rowsList = [];
+
+          for(int index = 0; index < time.length; ++index){
+            rowsList.add(
+              DataRow(cells: [
+                DataCell(Text(time[index])),
+                DataCell(Text(min[index].toString())),
+                DataCell(Text(max[index].toString())),
+                DataCell(Text(translateSingleForecast(weathercode[index].toString()))),
+              ])
             );
+          }
+          return
+          Column(
+            children: [
+              AutoSizeText("${region.name}, ${region.region}, ${region.country}",
+                maxFontSize: maxFont,
+                minFontSize: minFont,
+                maxLines: 1,
+                style: TextStyle(fontSize: size * 0.04),
+              ),
+              AutoSizeText('Latitude: ${region.latitude} Longitude: ${region.longitude}',
+                maxFontSize: maxFont,
+                minFontSize: minFont,
+                maxLines: 1,
+                style: TextStyle(fontSize: size * 0.04),
+              ),
+              DataTable(
+                columns: columnList,
+                rows: rowsList)
+            ],
+          );
         } else if(response.statusCode == 404){
           throw Exception("URL not found.");
         } else {
-          throw Exception("Unable to load region information.");
+          throw Exception("[${response.statusCode}] Unable to load region information.");
         }
         }catch(e){
             return Text(e.toString(), style: TextStyle(fontSize: size * 0.04, color: Colors.red),);
         }
     }
 
-    Widget regionEmpty = AutoSizeText('Unable to capture region information',
+    Widget regionEmpty = AutoSizeText('Region not found.',
         maxFontSize: maxFont,
         minFontSize: minFont,
         maxLines: 1,
