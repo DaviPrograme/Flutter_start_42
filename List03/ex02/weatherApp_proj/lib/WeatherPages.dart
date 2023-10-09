@@ -4,6 +4,7 @@ import './data/repositories/regionRepository.dart';
 import './data/http/http_client.dart';
 import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'ChartLineToday.dart';
 
 
 class WeatherPages extends StatelessWidget{
@@ -189,18 +190,21 @@ class WeatherPages extends StatelessWidget{
           return
           Column(
             children: [
-              AutoSizeText("${region.name}, ${region.region}, ${region.country}",
+              const SizedBox(height: 10,),
+              AutoSizeText("${region.name}, ${region.country}",
                 maxFontSize: maxFont,
                 minFontSize: minFont,
                 maxLines: 1,
-                style: TextStyle(fontSize: size * 0.04, color: Colors.white),
+                style: TextStyle(fontSize: size * 0.04, color: Colors.white, fontWeight: FontWeight.bold),
               ),
-              AutoSizeText('Latitude: ${region.latitude} Longitude: ${region.longitude}',
+              const SizedBox(height: 10,),
+              AutoSizeText('Temperatures',
                 maxFontSize: maxFont,
                 minFontSize: minFont,
                 maxLines: 1,
-                style: TextStyle(fontSize: size * 0.04, color: Colors.white),
+                style: TextStyle(fontSize: size * 0.04, color: Colors.white, fontWeight: FontWeight.bold),
               ),
+              ChartLineToday(time, temperature, size),
               DataTable(
                 columns: columnList,
                 rows: rowsList)
