@@ -314,6 +314,7 @@ class WeatherPages extends StatelessWidget{
                       size: size * 0.1,
                       color: Colors.orange,
                     ),
+                    const SizedBox(height: 10,),
                     AutoSizeText("${max[index]}ºC",
                       maxFontSize: maxFont,
                       minFontSize: minFont,
