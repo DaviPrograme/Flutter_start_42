@@ -213,7 +213,7 @@ class WeatherPages extends StatelessWidget{
           Column(
             children: [
               const SizedBox(height: 10,),
-              AutoSizeText("${region.name}, ${region.country}",
+              AutoSizeText("${region.name}, ${region.country}, ${region.country}",
                 maxFontSize: maxFont,
                 minFontSize: minFont,
                 maxLines: 1,
