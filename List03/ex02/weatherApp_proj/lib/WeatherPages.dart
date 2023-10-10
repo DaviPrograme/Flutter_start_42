@@ -169,24 +169,46 @@ class WeatherPages extends StatelessWidget{
           List<double> temperature = List<double>.from(body['hourly']['temperature_2m'].take(24));
           List<double> windspeed = List<double>.from(body['hourly']['windspeed_10m'].take(24));
           List<int> weathercode = List<int>.from(body['hourly']['weathercode'].take(24));
-          List<DataColumn> columnList = const [
-            DataColumn(label: Text("time", style: TextStyle(color: Colors.white))),
-            DataColumn(label: Text("ºC", style: TextStyle(color: Colors.white))),
-            DataColumn(label: Text("wind", style: TextStyle(color: Colors.white))),
-            DataColumn(label: Text("weather", style: TextStyle(color: Colors.white))),
-          ];
-          List<DataRow> rowsList = [];
+          List<Widget> temperaturePerHour = [];
 
           for(int index = 0; index < time.length; ++index){
-            rowsList.add(
-              DataRow(cells: [
-                DataCell(Text(time[index].split("T")[1], style: const TextStyle(color: Colors.white))),
-                DataCell(Text(temperature[index].toString(), style: const TextStyle(color: Colors.white))),
-                DataCell(Text("${windspeed[index].toString()} km", style: const TextStyle(color: Colors.white))),
-                DataCell(Text(translateSingleForecastText(weathercode[index].toString()), style: const TextStyle(color: Colors.white))),
-              ])
+            temperaturePerHour.add(
+              Container(
+                margin: EdgeInsets.only(right: size * 0.04),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(time[index].split("T")[1],
+                      style: TextStyle(
+                        fontSize: size * 0.04,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                      )
+                    ),
+                    Icon(
+                      translateSingleForecastIcon(translateSingleForecastText(weathercode[index].toString())),
+                      size: size * 0.1,
+                      color: Colors.orange,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.wind_power, size: size * 0.04, color: Colors.orange,),
+                        SizedBox(width: size * 0.02,),
+                        AutoSizeText("${windspeed[index].toString()} Km/h",
+                          maxFontSize: maxFont,
+                          minFontSize: minFont,
+                          maxLines: 1,
+                          style: TextStyle(fontSize: size * 0.035, color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
             );
           }
+
           return
           Column(
             children: [
@@ -205,9 +227,16 @@ class WeatherPages extends StatelessWidget{
                 style: TextStyle(fontSize: size * 0.04, color: Colors.white, fontWeight: FontWeight.bold),
               ),
               ChartLineToday(time, temperature, size),
-              DataTable(
-                columns: columnList,
-                rows: rowsList)
+              const SizedBox(height: 20,),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Row(
+                    children: temperaturePerHour,
+                  ),
+                ),
+              ),
             ],
           );
         } else if(response.statusCode == 404){
