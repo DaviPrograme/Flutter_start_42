@@ -5,6 +5,7 @@ import './data/http/http_client.dart';
 import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'ChartLineToday.dart';
+import 'ChartLineTWeekly.dart';
 
 
 class WeatherPages extends StatelessWidget{
@@ -108,7 +109,7 @@ class WeatherPages extends StatelessWidget{
           String forecast = translateSingleForecastText(body["current_weather"]["weathercode"].toString());
             return Column(
               children: [
-                AutoSizeText("${region.name}, ${region.country}",
+                AutoSizeText("${region.name}, ${region.region}, ${region.country}",
                   maxFontSize: maxFont,
                   minFontSize: minFont,
                   maxLines: 1,
@@ -251,6 +252,30 @@ class WeatherPages extends StatelessWidget{
 
 
     Future<Widget> getWeeklyWeatherRegion(RegionModel? region, Widget? gpsPermissionError) async {
+
+      String yearToWeekConverter(String dayYear){
+      DateTime data = DateTime.parse(dayYear);
+      int dayWeek = data.weekday;
+      switch (dayWeek) {
+        case 1:
+          return "MON";
+        case 2:
+          return "TUE";
+        case 3:
+          return "WED";
+        case 4:
+          return "THU";
+        case 5:
+          return "FRI";
+        case 6:
+          return "SAT";
+        case 7:
+          return "SUM";
+        default:
+          return "desconhecido";
+      }
+    }
+
       if(gpsPermissionError != null){
         return gpsPermissionError;
       }
@@ -260,16 +285,52 @@ class WeatherPages extends StatelessWidget{
         if(response.statusCode == 200){
           final body = jsonDecode(response.body);
           List<String> time = List<String>.from(body['daily']['time']);
+          List<String> daysWeek = [];
+          for(int index = 0; index < time.length; ++index){
+            daysWeek.add(yearToWeekConverter(time[index]));
+          }
           List<double> max = List<double>.from(body['daily']['temperature_2m_max']);
           List<double> min = List<double>.from(body['daily']['temperature_2m_min']);
           List<int> weathercode = List<int>.from(body['daily']['weathercode']);
-          List<DataColumn> columnList = const [
-            DataColumn(label: Text("time", style: TextStyle(color: Colors.white),)),
-            DataColumn(label: Text("min", style: TextStyle(color: Colors.white),)),
-            DataColumn(label: Text("max", style: TextStyle(color: Colors.white),)),
-            DataColumn(label: Text("weather", style: TextStyle(color: Colors.white),)),
-          ];
           List<DataRow> rowsList = [];
+          List<Widget> temperaturePerHour = [];
+
+          for(int index = 0; index < time.length; ++index){
+            temperaturePerHour.add(
+              Container(
+                margin: EdgeInsets.only(right: size * 0.04),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(daysWeek[index],
+                      style: TextStyle(
+                        fontSize: size * 0.04,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                      )
+                    ),
+                    Icon(
+                      translateSingleForecastIcon(translateSingleForecastText(weathercode[index].toString())),
+                      size: size * 0.1,
+                      color: Colors.orange,
+                    ),
+                    AutoSizeText("${max[index]}ºC",
+                      maxFontSize: maxFont,
+                      minFontSize: minFont,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: size * 0.035, color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                    AutoSizeText("${min[index]}ºC",
+                      maxFontSize: maxFont,
+                      minFontSize: minFont,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: size * 0.035, color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              )
+            );
+          }
 
           for(int index = 0; index < time.length; ++index){
             rowsList.add(
@@ -284,22 +345,60 @@ class WeatherPages extends StatelessWidget{
           return
           Column(
             children: [
+              const SizedBox(height: 10,),
               AutoSizeText("${region.name}, ${region.region}, ${region.country}",
                 maxFontSize: maxFont,
                 minFontSize: minFont,
                 maxLines: 1,
-                style: TextStyle(fontSize: size * 0.04, color: Colors.white),
+                style: TextStyle(fontSize: size * 0.04, color: Colors.white, fontWeight: FontWeight.bold),
               ),
-              AutoSizeText('Latitude: ${region.latitude} Longitude: ${region.longitude}',
-                maxFontSize: maxFont,
-                minFontSize: minFont,
-                maxLines: 1,
-                style: TextStyle(fontSize: size * 0.04, color: Colors.white),
+              const SizedBox(height: 10,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AutoSizeText('Temperatures( ',
+                    maxFontSize: maxFont,
+                    minFontSize: minFont,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: size * 0.04, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  AutoSizeText('MAX ',
+                    maxFontSize: maxFont,
+                    minFontSize: minFont,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: size * 0.04, color: Colors.red, fontWeight: FontWeight.bold),
+                  ),
+                  AutoSizeText('and ',
+                    maxFontSize: maxFont,
+                    minFontSize: minFont,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: size * 0.04, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  AutoSizeText('MIN ',
+                    maxFontSize: maxFont,
+                    minFontSize: minFont,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: size * 0.04, color: Colors.blue, fontWeight: FontWeight.bold),
+                  ),
+                   AutoSizeText(')',
+                    maxFontSize: maxFont,
+                    minFontSize: minFont,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: size * 0.04, color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              DataTable(
-                columns: columnList,
-                rows: rowsList
-              )
+              ChartLineTWeekly(daysWeek, min, max, size),
+              const SizedBox(height: 20,),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Row(
+                    children: temperaturePerHour,
+                  ),
+                ),
+              ),
             ],
           );
         } else if(response.statusCode == 404){
