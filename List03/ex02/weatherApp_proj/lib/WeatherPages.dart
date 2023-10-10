@@ -191,6 +191,13 @@ class WeatherPages extends StatelessWidget{
                       size: size * 0.1,
                       color: Colors.orange,
                     ),
+                    Text("${temperature[index]}ºC",
+                      style: TextStyle(
+                        fontSize: size * 0.03,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold
+                      )
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

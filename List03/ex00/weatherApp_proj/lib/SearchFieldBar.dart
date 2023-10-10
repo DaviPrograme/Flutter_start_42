@@ -95,7 +95,7 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
                 )
               ),
           ),
-        suggestionsCallback: (pattern) async {
+          suggestionsCallback: (pattern) async {
           try{
             return await RegionRepository(client: HttpRepository()).getRegionsSuggestion(pattern);
           } catch(e){
