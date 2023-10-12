@@ -104,9 +104,16 @@ class StateSearchFieldBar extends State<SearchFieldBar>{
           }
         },
         itemBuilder: (context, suggestion) {
+          var sugestionSplited = suggestion.toString().split(", ");
           return ListTile(
             leading: const Icon(Icons.location_city),
-            title: Text(suggestion),
+            title: Wrap(
+              children: [
+                Text("${sugestionSplited[0]}, ", style: const  TextStyle(fontWeight: FontWeight.bold)),
+                Text("${sugestionSplited[1]}, "),
+                Text(sugestionSplited[2],),
+              ],
+            ) ,
           );
         },
         onSuggestionSelected: (suggestion) {
