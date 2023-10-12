@@ -57,6 +57,7 @@ class WeatherPages extends StatelessWidget{
     double fontTextSize = size * 0.1;
     double maxFont = 100;
     double minFont = 10;
+    const int timeout = 15;
     
 
     Future<Widget> getCurrentWeatherRegion(RegionModel? region, Widget? gpsPermissionError) async {
@@ -65,7 +66,7 @@ class WeatherPages extends StatelessWidget{
       }
       try{
         RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
-        final response = await regionRepository.callAPIWeather(region!, "current_weather=true");
+        final response = await regionRepository.callAPIWeather(region!, "current_weather=true").timeout(const Duration(seconds: timeout));
         final body = jsonDecode(response.body);
         if(response.statusCode == 200){
             return Column(
@@ -118,7 +119,7 @@ class WeatherPages extends StatelessWidget{
       }
       try{
         RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
-        final response = await regionRepository.callAPIWeather(region!, "hourly=temperature_2m,weathercode,windspeed_10m&timezone=GMT");
+        final response = await regionRepository.callAPIWeather(region!, "hourly=temperature_2m,weathercode,windspeed_10m&timezone=GMT").timeout(const Duration(seconds: timeout)).timeout(const Duration(seconds: timeout));
         if(response.statusCode == 200){
           final body = jsonDecode(response.body);
           List<String> time = List<String>.from(body['hourly']['time'].take(24));
@@ -180,7 +181,7 @@ class WeatherPages extends StatelessWidget{
       }
       try{
         RegionRepository regionRepository =  RegionRepository(client: HttpRepository());
-        final response = await regionRepository.callAPIWeather(region!, "daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=GMT&current_weather=true");
+        final response = await regionRepository.callAPIWeather(region!, "daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=GMT&current_weather=true").timeout(const Duration(seconds: timeout));
         if(response.statusCode == 200){
           final body = jsonDecode(response.body);
           List<String> time = List<String>.from(body['daily']['time']);
