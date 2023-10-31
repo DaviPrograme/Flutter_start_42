@@ -3,8 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyC83aYqSsCHzRAXOXFQx2reVdQpk2ABZMo",
+      appId: "1:905386514427:android:23248385891ca7ab41dd5e",
+      messagingSenderId: '',
+      projectId: "dear-diary-42-5bb8c"
+    )
+  );
   runApp(const MyApp());
-  //await Firebase.initializeApp();
 }
 
 class MyApp extends StatelessWidget {
